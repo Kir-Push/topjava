@@ -14,7 +14,7 @@
 <body>
 <form method="post">
     <input type="hidden" name="id" value="${meal.id}">
-    <input type="text" name="Date" value="${meal.date}">
+    <input type="datetime-local" name="Date" value="${meal.dateTime}">
     <input type="text" name="description" value="${meal.description}">
     <input type="text" name="calories" value="${meal.calories}">
     <input type="submit">

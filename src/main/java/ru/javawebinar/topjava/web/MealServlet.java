@@ -60,7 +60,7 @@ public class MealServlet extends HttpServlet {
         String date = req.getParameter("Date");
         String description = req.getParameter("description");
         String calories = req.getParameter("calories");
-        LocalDateTime loc =LocalDateTime.from(TimeUtil.formatter.parse(date));
+        LocalDateTime loc =LocalDateTime.parse(date);
         UserMeal meal = dao.read(Integer.parseInt(id));
         meal.setCalories(Integer.parseInt(calories));
         meal.setDateTime(loc);
