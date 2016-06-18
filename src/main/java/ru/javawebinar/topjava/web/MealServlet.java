@@ -2,10 +2,13 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.repository.mock.InMemoryUserMealRepositoryImpl;
 import ru.javawebinar.topjava.repository.UserMealRepository;
 import ru.javawebinar.topjava.util.UserMealsUtil;
+import ru.javawebinar.topjava.web.meal.UserMealRestController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,7 +16,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 /**
@@ -23,23 +28,41 @@ import java.util.Objects;
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
 
-    private UserMealRepository repository;
+    private UserMealRestController repository;
+
+    private ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        repository = new InMemoryUserMealRepositoryImpl();
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+            repository = appCtx.getBean(UserMealRestController.class);
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String temp = request.getParameter("type");
+        if(temp != null && temp.equals("filter"))
+        {
+            String timeBefore = request.getParameter("TimeBefore");
+            String timeAfter = request.getParameter("TimeAfter");
+            String dateBefore = request.getParameter("dateTimeBefore");
+            String dateAfter = request.getParameter("dateTimeAfter");
+
+            LOG.info("getAllFiltered");
+            request.setAttribute("mealList",
+                    repository.getFiltered(timeBefore,timeAfter,dateBefore,dateAfter));
+            request.getRequestDispatcher("/mealList.jsp").forward(request, response);
+            return;
+        }
         String id = request.getParameter("id");
-        UserMeal userMeal = new UserMeal(id.isEmpty() ? null : Integer.valueOf(id),
+        UserMeal userMeal = new UserMeal(id.isEmpty() ? null : Integer.valueOf(id),1,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.valueOf(request.getParameter("calories")));
         LOG.info(userMeal.isNew() ? "Create {}" : "Update {}", userMeal);
-        repository.save(userMeal);
+        repository.create(userMeal);
         response.sendRedirect("meals");
     }
 
@@ -58,7 +81,7 @@ public class MealServlet extends HttpServlet {
             response.sendRedirect("meals");
         } else if (action.equals("create") || action.equals("update")) {
             final UserMeal meal = action.equals("create") ?
-                    new UserMeal(LocalDateTime.now().withNano(0).withSecond(0), "", 1000) :
+                    new UserMeal(1,LocalDateTime.now().withNano(0).withSecond(0), "", 1000) : //!!!!!!!!!
                     repository.get(getId(request));
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("mealEdit.jsp").forward(request, response);
@@ -68,5 +91,11 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.valueOf(paramId);
+    }
+
+    @Override
+    public void destroy() {
+        appCtx.close();
+        super.destroy();
     }
 }
