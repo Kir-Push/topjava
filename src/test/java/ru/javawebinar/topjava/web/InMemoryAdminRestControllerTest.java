@@ -21,7 +21,7 @@ public class InMemoryAdminRestControllerTest {
 
     @BeforeClass
     public static void beforeClass() {
-        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app-test.xml");
         System.out.println("\n" + Arrays.toString(appCtx.getBeanDefinitionNames()) + "\n");
         controller = appCtx.getBean(AdminRestController.class);
     }
@@ -35,6 +35,7 @@ public class InMemoryAdminRestControllerTest {
     public void setUp() throws Exception {
         // Re-initialize
         UserRepository repository = appCtx.getBean(UserRepository.class);
+        System.out.println(repository.getClass().getName());
         repository.getAll().forEach(u -> repository.delete(u.getId()));
         repository.save(USER);
         repository.save(ADMIN);
