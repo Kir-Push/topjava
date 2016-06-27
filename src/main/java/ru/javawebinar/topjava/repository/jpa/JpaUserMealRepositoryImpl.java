@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
@@ -11,6 +12,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.javawebinar.topjava.AuthorizedUser.id;
 
 /**
  * User: gkisline
@@ -36,7 +39,7 @@ public class JpaUserMealRepositoryImpl implements UserMealRepository {
         }
         else
         {
-           return em.merge(userMeal);
+           return get(userMeal.getId(),userId) == null ? null : em.merge(userMeal);
         }
     }
 
@@ -48,7 +51,7 @@ public class JpaUserMealRepositoryImpl implements UserMealRepository {
 
     @Override
     public UserMeal get(int id, int userId) {
-        return em.createNamedQuery(UserMeal.BY_ID,UserMeal.class).setParameter("id",id).setParameter("user_id",userId).getSingleResult();
+      return  DataAccessUtils.singleResult(em.createNamedQuery(UserMeal.BY_ID,UserMeal.class).setParameter("id",id).setParameter("user_id",userId).getResultList());
     }
 
     @Override

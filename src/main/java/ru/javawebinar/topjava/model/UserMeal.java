@@ -14,9 +14,10 @@ import java.time.LocalDateTime;
  */
 @NamedQueries({
         @NamedQuery(name = UserMeal.BY_ID, query = "SELECT m FROM UserMeal m WHERE m.id=:id AND m.user.id=:user_id"),
-        @NamedQuery(name = UserMeal.ALL, query = "SELECT m FROM UserMeal m WHERE m.user.id=:user_id ORDER BY m.dateTime"),
-        @NamedQuery(name = UserMeal.BETWEEN_DATES, query = "SELECT m FROM UserMeal m  WHERE m.user.id=:user_id AND m.dateTime  BETWEEN :startDate AND :endDate ORDER BY m.dateTime"),
+        @NamedQuery(name = UserMeal.ALL, query = "SELECT m FROM UserMeal m WHERE m.user.id=:user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = UserMeal.BETWEEN_DATES, query = "SELECT m FROM UserMeal m  WHERE m.user.id=:user_id AND m.dateTime  BETWEEN :startDate AND :endDate ORDER BY m.dateTime DESC"),
         @NamedQuery(name = UserMeal.DELETE, query = "DELETE FROM UserMeal m WHERE m.user.id=:user_id AND m.id=:id"),
+        @NamedQuery(name = UserMeal.UPDATE, query = "UPDATE UserMeal m SET m.dateTime = :datetime, m.calories= :calories, m.description=:desc where m.id=:id and m.user.id=:userId"),
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"date_time" ,"user_id"}, name = "meals_unique_user_datetime_idx")})
@@ -26,6 +27,7 @@ public class UserMeal extends BaseEntity {
     public static final String ALL = "UserMeal.ALL";
     public static final String BETWEEN_DATES= "UserMeal.BETWEEN_DATES";
     public static final String DELETE = "UserMeal.DELETE";
+    public static final String UPDATE = "UserMeal.UPDATE";
 
     @Column(name = "date_time", nullable = false, unique = true)
     @Convert(converter = LocalDateTimeConverter.class)
@@ -38,8 +40,9 @@ public class UserMeal extends BaseEntity {
     @Column(name = "calories", nullable = false)
     protected int calories;
 
-    @JoinColumn(name = "user_id")
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     protected User user;
 
     public UserMeal() {
