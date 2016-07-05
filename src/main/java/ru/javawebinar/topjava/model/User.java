@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,6 +51,10 @@ public class User extends NamedEntity {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     protected Set<Role> roles;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "user")
+    @OrderBy("dateTime DESC")
+    protected List<UserMeal> meals;
 
     @Column(name = "calories_per_day", columnDefinition = "default 2000")
     @Digits(fraction = 0, integer = 4)
@@ -129,5 +134,9 @@ public class User extends NamedEntity {
                 ", roles=" + roles +
                 ", caloriesPerDay=" + caloriesPerDay +
                 ')';
+    }
+
+    public List<UserMeal> getMeals() {
+        return meals;
     }
 }

@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.UserMeal;
 
+import javax.naming.OperationNotSupportedException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -24,4 +25,10 @@ public interface UserMealRepository {
 
     // ORDERED dateTime
     Collection<UserMeal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId);
+
+  default UserMeal getWithUser(int id,int userId)
+    {
+        throw new UnsupportedOperationException();
+    }
+
 }

@@ -59,6 +59,7 @@ public class UserMeal extends BaseEntity {
         this.calories = calories;
     }
 
+
     public LocalDateTime getDateTime() {
         return dateTime;
     }
