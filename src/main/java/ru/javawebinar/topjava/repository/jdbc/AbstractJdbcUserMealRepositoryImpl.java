@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,6 @@ import java.util.List;
  * User: gkislin
  * Date: 26.08.2014
  */
-
 public abstract class AbstractJdbcUserMealRepositoryImpl<T> implements UserMealRepository {
 
     private SimpleJdbcInsert insertUserMeal;

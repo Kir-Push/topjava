@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  * Date: 26.08.2014
  */
 
-@Repository
 @Profile(Profiles.POSTGRES)
+@Repository
 public class Java8JdbcUserMealRepositoryImpl extends AbstractJdbcUserMealRepositoryImpl<LocalDateTime> {
 
     @Autowired

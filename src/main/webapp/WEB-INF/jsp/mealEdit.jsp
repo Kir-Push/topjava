@@ -1,15 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 
 <html>
+<jsp:include page="fragments/headTag.jsp"/>
 <head>
-    <title>Meal</title>
+    <title><fmt:message key="meal.title"/></title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h2><a href="index.html">Home</a></h2>
-    <h3>${param.action == 'create' ? 'Create meal' : 'Edit meal'}</h3>
+    <h3><c:if test="${param.action == 'create'}">
+        <fmt:message key="meal.title"/>
+    </c:if>
+    </h3>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.UserMeal" scope="request"/>
     <form method="post" action="meals">

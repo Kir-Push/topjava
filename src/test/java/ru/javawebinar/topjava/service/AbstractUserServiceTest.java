@@ -3,7 +3,9 @@ package ru.javawebinar.topjava.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.UserTestData.*;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -21,13 +23,15 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired
+    @Autowired(required = false)
     protected JpaUtil jpaUtil;
 
     @Before
     public void setUp() throws Exception {
         service.evictCache();
-        jpaUtil.clear2ndLevelHibernateCache();
+        if(jpaUtil != null) {
+            jpaUtil.clear2ndLevelHibernateCache();
+        }
     }
 
     @Test
@@ -84,5 +88,10 @@ abstract public class AbstractUserServiceTest extends AbstractServiceTest {
         updated.setCaloriesPerDay(330);
         service.update(updated.asUser());
         MATCHER.assertEquals(updated, service.get(USER_ID));
+    }
+
+    @Test
+    public void testRoles() throws Exception {
+        MATCHER.assertEquals(UserTestData.ADMIN,service.get(ADMIN_ID));
     }
 }
