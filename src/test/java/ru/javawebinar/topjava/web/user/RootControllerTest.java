@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.junit.Test;
+import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.model.BaseEntity;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 
 import static org.hamcrest.Matchers.*;
@@ -30,5 +32,26 @@ public class RootControllerTest extends AbstractControllerTest {
                                 hasProperty("name", is(USER.getName()))
                         )
                 )));
+    }
+
+    @Test
+    public void testMealList() throws Exception {
+        if (AuthorizedUser.id() == BaseEntity.START_SEQ) {
+            mockMvc.perform(get("/meals"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("mealList"))
+                    .andExpect(forwardedUrl("/WEB-INF/jsp/mealList.jsp"))
+                    .andExpect(model().attribute("mealList", hasSize(6)));
+        }
+        else if(AuthorizedUser.id() == BaseEntity.START_SEQ+1)
+        {
+            mockMvc.perform(get("/meals"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("mealList"))
+                    .andExpect(forwardedUrl("/WEB-INF/jsp/mealList.jsp"))
+                    .andExpect(model().attribute("mealList", hasSize(2)));
+        }
     }
 }
