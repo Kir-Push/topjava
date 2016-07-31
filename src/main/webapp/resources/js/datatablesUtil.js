@@ -4,14 +4,34 @@ function makeEditable() {
         $('#editRow').modal();
     });
 
+    $('.edit').click(function () {
+        $('#id').val($(this).attr("id"));
+        $("#email").val($(this).attr("email"));
+        $("#name").val($(this).attr("petja"));
+        $('#editRow').modal();
+    });
+
+    $('.update').click(function () {
+        $('#id').val($(this).attr("id"));
+        $("#description").val($(this).attr("description"));
+        $("#calories").val($(this).attr("calories"));
+        $("#dateTime").val($(this).attr("dateTime"));
+        $('#editRow').modal();
+    });
+
     $('.delete').click(function () {
-        deleteRow($(this).attr("id"));
+        deleteRow($(this).parents('tr').attr("id"));
     });
 
     $('#detailsForm').submit(function () {
         save();
         return false;
     });
+
+    $('#filterRows').submit(function () {
+        filter();
+        return false;
+    })
 
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(event, jqXHR, options, jsExc);
@@ -23,19 +43,32 @@ function deleteRow(id) {
         url: ajaxUrl + id,
         type: 'DELETE',
         success: function () {
-            updateTable();
+            filter();
             successNoty('Deleted');
+        }
+    });
+}
+
+function updateActive(state,id) {
+  //  var enabled =  state.is(":checked");
+    var enabled = state;
+    $.ajax({
+        url: ajaxUrl + "active",
+        type: 'POST',
+        data: {active: enabled, id: id},
+        success: function () {
+            updateTable();
         }
     });
 }
 
 function updateTable() {
     $.get(ajaxUrl, function (data) {
-        datatableApi.fnClearTable();
+        datatableApi.clear();
         $.each(data, function (key, item) {
-            datatableApi.fnAddData(item);
+            datatableApi.row.add(item);
         });
-        datatableApi.fnDraw();
+        datatableApi.draw();
     });
 }
 
@@ -48,10 +81,28 @@ function save() {
         data: form.serialize(),
         success: function () {
             $('#editRow').modal('hide');
-            updateTable();
+            filter();
             successNoty('Saved');
         }
     });
+}
+
+function filter() {
+    var form = $('#filterRows');
+    debugger;
+    $.ajax({
+        type: "GET",
+        url: ajaxUrl+"filter",
+        data: form.serialize(),
+        success: function (data) {
+            datatableApi.clear();
+            $.each(data, function (key, item) {
+                datatableApi.row.add(item);
+            });
+            datatableApi.draw();
+        }
+    });
+
 }
 
 var failedNote;

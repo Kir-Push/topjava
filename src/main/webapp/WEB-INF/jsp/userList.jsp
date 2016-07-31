@@ -36,11 +36,10 @@
                             <td><a href="mailto:${user.email}">${user.email}</a></td>
                             <td>${user.roles}</td>
                             <td>
-                                <input type="checkbox"
-                                       <c:if test="${user.enabled}">checked</c:if> id="${user.id}"/>
+                                <input type="checkbox" <c:if test="${user.enabled}">checked</c:if> onclick="updateActive(${!user.enabled}, ${user.id})"/>
                             </td>
                             <td><fmt:formatDate value="${user.registered}" pattern="dd-MMMM-yyyy"/></td>
-                            <td><a class="btn btn-xs btn-primary edit" id="${user.id}">Edit</a></td>
+                            <td><a class="btn btn-xs btn-primary edit" id="${user.id}" email="${user.email}" petja="${user.name}">Edit</a></td>
                             <td><a class="btn btn-xs btn-danger delete" id="${user.id}">Delete</a></td>
                         </tr>
                     </c:forEach>

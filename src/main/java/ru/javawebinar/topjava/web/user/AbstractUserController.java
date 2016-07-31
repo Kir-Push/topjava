@@ -48,4 +48,10 @@ public abstract class AbstractUserController {
         log.info("getByEmail " + email);
         return service.getByEmail(email);
     }
+
+    public void updateState(int id, boolean state)
+    {
+        log.info("updateState " + id + " " + state);
+        service.updateState(id,state);
+    }
 }
