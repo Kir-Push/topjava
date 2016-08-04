@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.UserMeal;
+import ru.javawebinar.topjava.to.UserMealTo;
 import ru.javawebinar.topjava.to.UserMealWithExceed;
 
 import java.time.LocalDate;
@@ -65,5 +66,17 @@ public class UserMealsUtil {
 
     public static UserMealWithExceed createWithExceed(UserMeal um, boolean exceeded) {
         return new UserMealWithExceed(um.getId(), um.getDateTime(), um.getDescription(), um.getCalories(), exceeded);
+    }
+
+    public static UserMeal createNewFromTo(UserMealTo userMealTo) {
+        return new UserMeal(userMealTo.getId(),userMealTo.getDateTime(),userMealTo.getDescription(),userMealTo.getCalories());
+    }
+
+    public static UserMeal updateFromTo(UserMealTo userMealTo, UserMeal userMeal) {
+        userMeal.setDateTime(userMealTo.getDateTime());
+        userMeal.setCalories(userMealTo.getCalories());
+        userMeal.setDescription(userMealTo.getDescription());
+        userMeal.setId(userMealTo.getId());
+        return userMeal;
     }
 }
