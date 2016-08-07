@@ -71,4 +71,8 @@ public abstract class AbstractUserMealController {
         LOG.info("update " + userMealTo);
         service.update(userMealTo,AuthorizedUser.id());
     }
+
+    public void update(UserMeal userMealTo) {
+        update(userMealTo,AuthorizedUser.id());
+    }
 }

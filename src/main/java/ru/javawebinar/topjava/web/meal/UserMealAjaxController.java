@@ -50,11 +50,7 @@ public class UserMealAjaxController extends AbstractUserMealController {
             {
                 System.out.println(fb.getField());
                 System.out.println(fb.getDefaultMessage());
-                if(fb.getField().contains("calories") && fb.getDefaultMessage().contains("NumberFormatException"))
-                {
-                    sb.append(fb.getField()).append(" ").append("may be not null").append("<br>");
-                }
-                else
+
                 {
                     sb.append(fb.getField()).append(" ").append(fb.getDefaultMessage()).append("<br>");
                 }
