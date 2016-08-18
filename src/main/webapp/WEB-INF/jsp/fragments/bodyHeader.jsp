@@ -9,7 +9,9 @@
         <a href="meals" class="navbar-brand"><fmt:message key="app.title"/></a>
 
         <div class="collapse navbar-collapse">
-            <form:form class="navbar-form navbar-right" action="logout" method="post">
+                <ul class="nav navbar-nav navbar-right">
+                               <li>
+                                   <form:form class="navbar-form" action="logout" method="post">
                 <sec:authorize access="isAuthenticated()">
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                         <a class="btn btn-info" role="button" href="users"><fmt:message key="users.title"/></a>
@@ -18,6 +20,19 @@
                     <input type="submit" class="btn btn-primary" value="<fmt:message key="app.logout"/>">
                 </sec:authorize>
             </form:form>
+                    </li>
+            <li class="dropdown">
+                <a class="btn dropdown-toggle" data-toggle="dropdown">
+                    <fmt:message key="lang.lang"/>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href=${requestScope['javax.servlet.forward.request_uri']}?language=en>English</a></li>
+                    <li><a href=${requestScope['javax.servlet.forward.request_uri']}?language=ru_RU>Русский</a></li>
+                </ul>
+            </li>
+</ul>
         </div>
     </div>
 </div>
+

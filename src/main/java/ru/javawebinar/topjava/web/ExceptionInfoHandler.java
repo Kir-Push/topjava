@@ -6,6 +6,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +24,31 @@ import javax.servlet.http.HttpServletRequest;
 public interface ExceptionInfoHandler {
     Logger LOG = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
+
+    @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE + 3)
+    default ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        return logAndGetErrorInfo(req, e, true);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BindException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE+2)
+    default ErrorInfo handleError(HttpServletRequest req, BindException e) {
+        return logAndGetErrorInfo(req, e.getBindingResult(), false);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE+2)
+    default ErrorInfo handleError(HttpServletRequest req, MethodArgumentNotValidException e) {
+        return logAndGetErrorInfo(req, e.getBindingResult(), false);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     @ResponseBody
@@ -29,13 +57,6 @@ public interface ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseBody
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
-    default ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return logAndGetErrorInfo(req, e, true);
-    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -52,5 +73,16 @@ public interface ExceptionInfoHandler {
             LOG.warn("Exception at request " + req.getRequestURL() + ": " + e.toString());
         }
         return new ErrorInfo(req.getRequestURL(), e);
+    }
+
+    default ErrorInfo logAndGetErrorInfo(HttpServletRequest req, BindingResult e, boolean logException) {
+        if (logException) {
+            LOG.error("Exception at request " + req.getRequestURL(), e);
+        } else {
+            LOG.warn("Exception at request " + req.getRequestURL() + ": " + e.toString());
+        }
+        StringBuilder sb = new StringBuilder();
+        e.getFieldErrors().stream().forEach(fe -> sb.append(fe.getField() + " ").append(fe.getDefaultMessage()));
+        return new ErrorInfo(req.getRequestURL(),"Validation Exception",sb.toString());
     }
 }

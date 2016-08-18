@@ -30,6 +30,7 @@
         <!--<csrf disabled="true"/>-->
     </http>
 
+
     <beans:bean class="ru.javawebinar.topjava.util.PasswordUtil" id="passwordEncoder" factory-method="getPasswordEncoder"/>
 
     <authentication-manager>
@@ -49,4 +50,5 @@
             -->
         </authentication-provider>
     </authentication-manager>
+
 </beans:beans>

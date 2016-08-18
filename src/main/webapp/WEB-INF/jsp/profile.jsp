@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page  contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -39,4 +38,7 @@
 
 <jsp:include page="fragments/footer.jsp"/>
 </body>
+
+<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </html>
